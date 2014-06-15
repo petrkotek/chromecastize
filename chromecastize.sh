@@ -101,8 +101,9 @@ process_file() {
         if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ]; then
                 echo "- file should be playable by Chromecast!"
         else
-                echo "- file needs a conversion :("
-                ffmpeg -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && mv "$FILENAME" "$FILENAME.bak" || rm "$FILENAME.mkv"
+                echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
+                ffmpeg -loglevel panic -stats -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && mv "$FILENAME" "$FILENAME.bak" || rm "$FILENAME.mkv"
+		echo "done"
         fi
 }
 
