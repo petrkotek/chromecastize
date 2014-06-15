@@ -3,6 +3,7 @@
 ##########
 # CONFIG #
 ##########
+HOME=~/.chromecastize
 SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4' '3gp' 'mov' 'mpg' 'mpeg' 'qt' 'wmv' 'm2ts')
 
 SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
@@ -83,6 +84,23 @@ is_supported_ext() {
 	in_array "$EXT" "${SUPPORTED_EXTENSIONS[@]}"
 }
 
+mark_as_good() {
+	# add file as successfully converted
+	FILENAME=$1
+	echo `grealpath "$FILENAME"` >> $HOME/processed_files
+}
+
+on_success() {
+	FILENAME="$1"
+	mark_as_good "$FILENAME.mkv"
+	mv "$FILENAME" "$FILENAME.bak"
+}
+
+on_failure() {
+	FILENAME="$1"
+	rm "$FILENAME"
+}
+
 process_file() {
 	echo "==========="
         echo "Processing: $FILENAME"
@@ -94,6 +112,12 @@ process_file() {
                 echo "- not a video format, skipping"
                 continue
         fi
+
+	# test if it's an `chromecastize` generated file
+	if grep -Fxq "`grealpath "$FILENAME"`" $HOME/processed_files; then
+		echo '- file was genereated by `chromecastize`, skipping'
+		continue
+	fi
 
 	# test general format
         INPUT_GFORMAT=`mediainfo --Inform="General;%Format%\n" "$FILENAME" | head -n1`
@@ -124,9 +148,10 @@ process_file() {
 
         if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ] && [ "$OUTPUT_GFORMAT" = "ok" ]; then
                 echo "- file should be playable by Chromecast!"
+		mark_as_good "$FILENAME"
         else
                 echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
-                ffmpeg -loglevel panic -stats -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && mv "$FILENAME" "$FILENAME.bak" || rm "$FILENAME.mkv"
+                ffmpeg -loglevel panic -stats -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
         fi
 }
 
@@ -148,11 +173,22 @@ if [ -z $FFMPEG ]; then
 	exit 1
 fi
 
+# test if `grealpath` is available
+REALPATH=`which grealpath`
+if [ -z $REALPATH ]; then
+        echo '`grealpath` is not available, please install it'
+        exit 1
+fi
+
 # check number of arguments
 if [ $# -lt 1 ]; then
 	print_help
 	exit 1
 fi
+
+# ensure that processed_files file exists
+mkdir -p $HOME
+touch $HOME/processed_files
 
 for FILENAME in "$@"; do
 	process_file $FILENAME
