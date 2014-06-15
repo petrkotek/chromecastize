@@ -12,8 +12,8 @@ UNSUPPORTED_GFORMATS=('BDAV' 'AVI')
 SUPPORTED_VCODECS=('AVC')
 UNSUPPORTED_VCODECS=('MPEG-4 Visual')
 
-SUPPORTED_ACODECS=('AAC' 'MPEG Audio')
-UNSUPPORTED_ACODECS=('AC-3')
+SUPPORTED_ACODECS=('AAC' 'MPEG Audio' 'Vorbis')
+UNSUPPORTED_ACODECS=('AC-3' 'DTS')
 
 DEFAULT_VCODEC=h264
 DEFAULT_ACODEC=libvorbis
@@ -149,9 +149,10 @@ process_file() {
         if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ] && [ "$OUTPUT_GFORMAT" = "ok" ]; then
                 echo "- file should be playable by Chromecast!"
 		mark_as_good "$FILENAME"
-        else
-                echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
-                ffmpeg -loglevel panic -stats -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
+	else
+		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
+		ffmpeg -loglevel panic -stats -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
+		echo ""
         fi
 }
 
