@@ -11,6 +11,8 @@ Requirements
 - `mediainfo`
 - `ffmpeg`
 
+Install requirements by running e.g. `apt-get install ffmpeg mediainfo` (Debian) or `brew install ffmpeg mediainfo` (MacOS with Homebrew).
+
 Usage
 -----
 ```
