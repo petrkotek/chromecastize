@@ -86,8 +86,7 @@ is_supported_ext() {
 
 mark_as_good() {
 	# add file as successfully converted
-	FILENAME=$1
-	echo `$REALPATH "$FILENAME"` >> $HOME/processed_files
+	echo `$REALPATH "$1"` >> $HOME/processed_files
 }
 
 on_success() {
