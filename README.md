@@ -1,5 +1,5 @@
-chromcastize
-============
+chromecastize
+=============
 Simple bash script to convert video files into Google Chromecast supported format.
 
 Script identifies video and audio format of given file (using `mediainfo`) and converts it if necessary (using `ffmpeg`).
@@ -18,3 +18,7 @@ Usage
 ```
 ./chromecastize.sh <videofile1> [videofile2 ...]
 ```
+
+### Examples:
+- `./chromecastize.sh ~/Movies/*` - converts all videos in `~/Movies` directory
+- `find /Volumes/MyNAS -type f -exec ./chromecastize.sh {} \;` - converts all videos on your NAS (assuming that it's mounted to `/Volumes/MyNAS`)
