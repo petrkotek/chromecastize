@@ -33,6 +33,10 @@ in_array() {
     return 1
 }
 
+print_help() {
+	echo "Usage: chromecastize.sh <videofile1> [ videofile2 ... ]"
+}
+
 unknown_codec() {
 	echo "'$1' is an unknown codec. Please add it to the list in a CONFIG section."
 }
@@ -63,6 +67,44 @@ is_supported_ext() {
 	in_array "$1" "${SUPPORTED_EXTENSIONS[@]}"
 }
 
+process_file() {
+	echo "==========="
+        echo "Processing: $FILENAME"
+
+        # test extension
+        BASENAME=$(basename "$FILENAME")
+        EXTENSION="${BASENAME##*.}"
+        if ! is_supported_ext "$EXTENSION"; then
+                echo "- not a video format, skipping"
+                continue
+        fi
+
+        # test video codec
+        INPUT_VCODEC=`mediainfo --Inform="Video;%Format%" "$FILENAME"`
+        if is_supported_vcodec "$INPUT_VCODEC"; then
+                OUTPUT_VCODEC="copy"
+        else
+                OUTPUT_VCODEC="$DEFAULT_VCODEC"
+        fi
+        echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
+
+        # test audio codec
+        INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%" "$FILENAME"`
+        if is_supported_acodec "$INPUT_ACODEC"; then
+                OUTPUT_ACODEC="copy"
+        else
+                OUTPUT_ACODEC="$DEFAULT_ACODEC"
+        fi
+        echo "- audio: $INPUT_ACODEC -> $OUTPUT_ACODEC"
+
+        if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ]; then
+                echo "- file should be playable by Chromecast!"
+        else
+                echo "- file needs a conversion :("
+                ffmpeg -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && mv "$FILENAME" "$FILENAME.bak" || rm "$FILENAME.mkv"
+        fi
+}
+
 ################
 # MAIN PROGRAM #
 ################
@@ -74,50 +116,20 @@ if [ -z $MEDIAINFO ]; then
 	exit 1
 fi
 
-# check number of arguments
-if [ $# -lt 1 ]; then
-	echo "Illegal number of parameters"
+# test if `ffmpeg` is available
+FFMPEG=`which ffmpeg`
+if [ -z $FFMPEG ]; then
+	echo '`ffmpeg` is not available, please install it'
 	exit 1
 fi
 
-
-#
+# check number of arguments
+if [ $# -lt 1 ]; then
+	print_help
+	exit 1
+fi
 
 for FILENAME in "$@"; do
-	echo "==========="
-	echo "Processing: $FILENAME"
-
-	# test extension
-	BASENAME=$(basename "$FILENAME")
-	EXTENSION="${BASENAME##*.}"
-	if ! is_supported_ext "$EXTENSION"; then
-		echo "- not a video format, skipping"
-		continue
-	fi
-
-	# test video codec
-	INPUT_VCODEC=`mediainfo --Inform="Video;%Format%" "$FILENAME"`
-	if is_supported_vcodec "$INPUT_VCODEC"; then
-		OUTPUT_VCODEC="copy"
-	else
-		OUTPUT_VCODEC="$DEFAULT_VCODEC"
-	fi
-	echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
-	
-	# test audio codec
-	INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%" "$FILENAME"`
-	if is_supported_acodec "$INPUT_ACODEC"; then
-		OUTPUT_ACODEC="copy"
-	else
-		OUTPUT_ACODEC="$DEFAULT_ACODEC"
-	fi
-	echo "- audio: $INPUT_ACODEC -> $OUTPUT_ACODEC"
-
-	if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ]; then
-		echo "- file should be playable by Chromecast!"
-	else
-		echo "- file needs a conversion :("
-		ffmpeg -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && mv "$FILENAME" "$FILENAME.bak" || rm "$FILENAME.mkv"
-	fi
+	process_file $FILENAME
 done
 
