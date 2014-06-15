@@ -64,7 +64,8 @@ is_supported_acodec() {
 }
 
 is_supported_ext() {
-	in_array "$1" "${SUPPORTED_EXTENSIONS[@]}"
+	EXT=`echo $1 | tr '[:upper:]' '[:lower:]'`
+	in_array "$EXT" "${SUPPORTED_EXTENSIONS[@]}"
 }
 
 process_file() {
