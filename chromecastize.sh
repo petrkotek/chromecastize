@@ -3,7 +3,10 @@
 ##########
 # CONFIG #
 ##########
-SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4')
+SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4' '3gp' 'mov' 'mpg' 'mpeg' 'qt' 'wmv' 'm2ts')
+
+SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
+UNSUPPORTED_GFORMATS=('BDAV')
 
 SUPPORTED_VCODECS=('AVC')
 UNSUPPORTED_VCODECS=('MPEG-4 Visual')
@@ -13,6 +16,7 @@ UNSUPPORTED_ACODECS=('AC-3')
 
 DEFAULT_VCODEC=h264
 DEFAULT_ACODEC=libvorbis
+DEFAULT_GFORMAT=mkv
 
 #############
 # FUNCTIONS #
@@ -39,6 +43,17 @@ print_help() {
 
 unknown_codec() {
 	echo "'$1' is an unknown codec. Please add it to the list in a CONFIG section."
+}
+
+is_supported_gformat() {
+	if in_array "$1" "${SUPPORTED_GFORMATS[@]}"; then
+                return 0
+        elif in_array "$1" "${UNSUPPORTED_GFORMATS[@]}"; then
+                return 1
+        else
+                unknown_codec "$1"
+                exit 1
+        fi
 }
 
 is_supported_vcodec() {
@@ -80,8 +95,17 @@ process_file() {
                 continue
         fi
 
+	# test general format
+        INPUT_GFORMAT=`mediainfo --Inform="General;%Format%\n" "$FILENAME" | head -n1`
+        if is_supported_gformat "$INPUT_GFORMAT"; then
+                OUTPUT_GFORMAT="ok"
+        else
+                OUTPUT_GFORMAT="$DEFAULT_GFORMAT"
+        fi
+        echo "- general: $INPUT_GFORMAT -> $OUTPUT_GFORMAT"
+
         # test video codec
-        INPUT_VCODEC=`mediainfo --Inform="Video;%Format%" "$FILENAME"`
+        INPUT_VCODEC=`mediainfo --Inform="Video;%Format%\n" "$FILENAME" | head -n1`
         if is_supported_vcodec "$INPUT_VCODEC"; then
                 OUTPUT_VCODEC="copy"
         else
@@ -90,7 +114,7 @@ process_file() {
         echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
 
         # test audio codec
-        INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%" "$FILENAME"`
+        INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%\n" "$FILENAME" | head -n1`
         if is_supported_acodec "$INPUT_ACODEC"; then
                 OUTPUT_ACODEC="copy"
         else
@@ -98,12 +122,11 @@ process_file() {
         fi
         echo "- audio: $INPUT_ACODEC -> $OUTPUT_ACODEC"
 
-        if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ]; then
+        if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ] && [ "$OUTPUT_GFORMAT" = "ok" ]; then
                 echo "- file should be playable by Chromecast!"
         else
                 echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
                 ffmpeg -loglevel panic -stats -i "$FILENAME" -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && mv "$FILENAME" "$FILENAME.bak" || rm "$FILENAME.mkv"
-		echo "done"
         fi
 }
 
