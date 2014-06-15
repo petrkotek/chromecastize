@@ -87,7 +87,7 @@ is_supported_ext() {
 mark_as_good() {
 	# add file as successfully converted
 	FILENAME=$1
-	echo `grealpath "$FILENAME"` >> $HOME/processed_files
+	echo `$REALPATH "$FILENAME"` >> $HOME/processed_files
 }
 
 on_success() {
@@ -114,7 +114,7 @@ process_file() {
         fi
 
 	# test if it's an `chromecastize` generated file
-	if grep -Fxq "`grealpath "$FILENAME"`" $HOME/processed_files; then
+	if grep -Fxq "`$REALPATH "$FILENAME"`" $HOME/processed_files; then
 		echo '- file was genereated by `chromecastize`, skipping'
 		continue
 	fi
@@ -174,11 +174,11 @@ if [ -z $FFMPEG ]; then
 	exit 1
 fi
 
-# test if `grealpath` is available
-REALPATH=`which grealpath`
+# test if `grealpath` or `realpath` is available
+REALPATH=`which realpath | which grealpath`
 if [ -z $REALPATH ]; then
-        echo '`grealpath` is not available, please install it'
-        exit 1
+	echo '`grealpath` (or `realpath`) is not available, please install it'
+	exit 1
 fi
 
 # check number of arguments
