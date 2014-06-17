@@ -174,7 +174,7 @@ if [ -z $FFMPEG ]; then
 fi
 
 # test if `grealpath` or `realpath` is available
-REALPATH=`which realpath | which grealpath`
+REALPATH=`which realpath || which grealpath`
 if [ -z $REALPATH ]; then
 	echo '`grealpath` (or `realpath`) is not available, please install it'
 	exit 1
