@@ -10,7 +10,7 @@ SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
 UNSUPPORTED_GFORMATS=('BDAV' 'AVI')
 
 SUPPORTED_VCODECS=('AVC')
-UNSUPPORTED_VCODECS=('MPEG-4 Visual')
+UNSUPPORTED_VCODECS=('MPEG-4 Visual' 'xvid')
 
 SUPPORTED_ACODECS=('AAC' 'MPEG Audio' 'Vorbis')
 UNSUPPORTED_ACODECS=('AC-3' 'DTS')
@@ -97,7 +97,7 @@ on_success() {
 
 on_failure() {
 	FILENAME="$1"
-	rm "$FILENAME"
+	rm "$FILENAME.mkv"
 }
 
 process_file() {
