@@ -97,7 +97,9 @@ on_success() {
 
 on_failure() {
 	FILENAME="$1"
-	rm "$FILENAME.mkv"
+	echo "- failed to convert '$FILENAME' (or conversion has been interrupted)"
+	echo "- deleting partially converted file..."
+	rm "$FILENAME.mkv" &> /dev/null
 }
 
 process_file() {
