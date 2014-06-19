@@ -91,7 +91,10 @@ mark_as_good() {
 
 on_success() {
 	FILENAME="$1"
+	BASENAME=`basename "$FILENAME"`
+	echo "- conversion succeeded; file '$BASENAME.mkv' saved"
 	mark_as_good "$FILENAME.mkv"
+	echo "- renaming original file as '$BASENAME.bak'"
 	mv "$FILENAME" "$FILENAME.bak"
 }
 
