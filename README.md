@@ -22,3 +22,7 @@ Usage
 ### Examples:
 - `./chromecastize.sh ~/Movies/*` - converts all videos in `~/Movies` directory
 - `find /Volumes/MyNAS -type f -exec ./chromecastize.sh {} \;` - converts all videos on your NAS (assuming that it's mounted to `/Volumes/MyNAS`)
+
+Authors
+-------
+- **Petr Kotek** (did the script save you some time? donations appreciated: www.petrkotek.com)
