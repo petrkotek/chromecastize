@@ -155,7 +155,7 @@ process_file() {
 		mark_as_good "$FILENAME"
 	else
 		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
-		$FFMPEG -loglevel panic -stats -i "$FILENAME" -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
+		$FFMPEG -loglevel error -stats -i "$FILENAME" -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
 		echo ""
         fi
 }
