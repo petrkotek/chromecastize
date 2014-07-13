@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ##########
 # CONFIG #
@@ -155,7 +155,7 @@ process_file() {
 		mark_as_good "$FILENAME"
 	else
 		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
-		ffmpeg -loglevel panic -stats -i "$FILENAME" -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
+		$FFMPEG -loglevel error -stats -i "$FILENAME" -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
 		echo ""
         fi
 }
@@ -172,9 +172,9 @@ if [ -z $MEDIAINFO ]; then
 fi
 
 # test if `ffmpeg` is available
-FFMPEG=`which ffmpeg`
+FFMPEG=`which avconv || which ffmpeg`
 if [ -z $FFMPEG ]; then
-	echo '`ffmpeg` is not available, please install it'
+	echo '`avconv` (or `ffmpeg`) is not available, please install it'
 	exit 1
 fi
 
@@ -198,4 +198,3 @@ touch $HOME/processed_files
 for FILENAME in "$@"; do
 	process_file $FILENAME
 done
-
