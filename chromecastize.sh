@@ -90,6 +90,7 @@ mark_as_good() {
 }
 
 on_success() {
+	echo ""
 	FILENAME="$1"
 	BASENAME=`basename "$FILENAME"`
 	echo "- conversion succeeded; file '$BASENAME.mkv' saved"
@@ -99,6 +100,7 @@ on_success() {
 }
 
 on_failure() {
+	echo ""
 	FILENAME="$1"
 	echo "- failed to convert '$FILENAME' (or conversion has been interrupted)"
 	echo "- deleting partially converted file..."
