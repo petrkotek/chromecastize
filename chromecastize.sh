@@ -196,5 +196,11 @@ mkdir -p $HOME
 touch $HOME/processed_files
 
 for FILENAME in "$@"; do
-	process_file $FILENAME
+	if [ -d "$FILENAME" ]; then
+		for F in $(find "$FILENAME" -type f); do
+			process_file $F
+		done
+	else
+		process_file $FILENAME
+	fi
 done
