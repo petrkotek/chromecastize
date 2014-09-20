@@ -4,10 +4,10 @@
 # CONFIG #
 ##########
 HOME=~/.chromecastize
-SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4' '3gp' 'mov' 'mpg' 'mpeg' 'qt' 'wmv' 'm2ts')
+SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4' '3gp' 'mov' 'mpg' 'mpeg' 'qt' 'wmv' 'm2ts' 'flv')
 
 SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
-UNSUPPORTED_GFORMATS=('BDAV' 'AVI')
+UNSUPPORTED_GFORMATS=('BDAV' 'AVI' 'Flash Video')
 
 SUPPORTED_VCODECS=('AVC')
 UNSUPPORTED_VCODECS=('MPEG-4 Visual' 'xvid' 'MPEG Video')
