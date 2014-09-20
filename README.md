@@ -20,8 +20,8 @@ Usage
 ```
 
 ### Examples:
-- `./chromecastize.sh ~/Movies/*` - converts all videos in `~/Movies` directory
-- `find /Volumes/MyNAS -type f -exec ./chromecastize.sh {} \;` - converts all videos on your NAS (assuming that it's mounted to `/Volumes/MyNAS`)
+- `./chromecastize.sh /Volumes/MyNAS` - converts all videos on your NAS (assuming that it's mounted to `/Volumes/MyNAS`)
+- `./chromecastize.sh Holiday.avi Wedding.avi` - converts specified video files
 
 Authors
 -------
