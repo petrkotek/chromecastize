@@ -39,7 +39,7 @@ in_array() {
 }
 
 print_help() {
-	echo "Usage: chromecastize.sh <videofile1> [ videofile2 ... ]"
+	echo "Usage: chromecastize.sh [ --mp4 | --mkv ] <videofile1> [ videofile2 ... ]"
 }
 
 unknown_codec() {
@@ -93,9 +93,9 @@ on_success() {
 	echo ""
 	FILENAME="$1"
 	BASENAME=`basename "$FILENAME"`
-	echo "- conversion succeeded; file '$BASENAME.mkv' saved"
-	mark_as_good "$FILENAME.mkv"
-	echo "- renaming original file as '$BASENAME.bak'"
+	echo "- conversion succeeded; file '$FILENAME.$OUTPUT_GFORMAT' saved"
+	mark_as_good "$FILENAME.$OUTPUT_GFORMAT"
+	echo "- renaming original file as '$FILENAME.bak'"
 	mv "$FILENAME" "$FILENAME.bak"
 }
 
@@ -127,10 +127,11 @@ process_file() {
 
 	# test general format
         INPUT_GFORMAT=`mediainfo --Inform="General;%Format%\n" "$FILENAME" | head -n1`
-        if is_supported_gformat "$INPUT_GFORMAT"; then
+        if is_supported_gformat "$INPUT_GFORMAT" && [ "$OVERRIDE_GFORMAT" = "" ] || [ "$OVERRIDE_GFORMAT" = "$EXTENSION" ]; then
                 OUTPUT_GFORMAT="ok"
         else
-                OUTPUT_GFORMAT="$DEFAULT_GFORMAT"
+                # if override format is specified, use it; otherwise fall back to default format
+                OUTPUT_GFORMAT="${OVERRIDE_GFORMAT:-$DEFAULT_GFORMAT}"
         fi
         echo "- general: $INPUT_GFORMAT -> $OUTPUT_GFORMAT"
 
@@ -157,7 +158,7 @@ process_file() {
 		mark_as_good "$FILENAME"
 	else
 		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
-		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.mkv" && on_success "$FILENAME" || on_failure "$FILENAME"
+		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" || on_failure "$FILENAME"
 		echo ""
         fi
 }
@@ -198,11 +199,15 @@ mkdir -p $HOME
 touch $HOME/processed_files
 
 for FILENAME in "$@"; do
-	if [ -d "$FILENAME" ]; then
-		for F in $(find "$FILENAME" -type f); do
-			process_file $F
-		done
+	if [ "$FILENAME" = "--mp4" ] || [ "$FILENAME" = "--mkv" ]; then
+		OVERRIDE_GFORMAT=`echo "$FILENAME" | sed 's/^--//'`
 	else
-		process_file $FILENAME
+		if [ -d "$FILENAME" ]; then
+			for F in $(find "$FILENAME" -type f); do
+				process_file $F
+			done
+		else
+			process_file $FILENAME
+		fi
 	fi
 done
