@@ -16,12 +16,16 @@ Install requirements by running e.g. `apt-get install ffmpeg mediainfo` (Debian)
 Usage
 -----
 ```
-./chromecastize.sh <videofile1> [videofile2 ...]
+./chromecastize.sh [--mp4 | --mkv] <videofile1> [videofile2 ...]
 ```
 
 ### Examples:
 - `./chromecastize.sh /Volumes/MyNAS` - converts all videos on your NAS (assuming that it's mounted to `/Volumes/MyNAS`)
 - `./chromecastize.sh Holiday.avi Wedding.avi` - converts specified video files
+
+### Options:
+- `--mp4` forces conversion to MPEG-4 container
+- `--mkv` forces conversion to Matroska container
 
 Authors
 -------
