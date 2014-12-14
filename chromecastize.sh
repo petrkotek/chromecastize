@@ -201,13 +201,15 @@ touch $HOME/processed_files
 for FILENAME in "$@"; do
 	if [ "$FILENAME" = "--mp4" ] || [ "$FILENAME" = "--mkv" ]; then
 		OVERRIDE_GFORMAT=`echo "$FILENAME" | sed 's/^--//'`
+	elif ! [ -e "$FILENAME" ]; then
+		echo "File not found ($FILENAME). Skipping..."
+	elif [ -d "$FILENAME" ]; then
+		for F in $(find "$FILENAME" -type f); do
+			process_file $F
+		done
+	elif [ -f "$FILENAME" ]; then
+		process_file $FILENAME
 	else
-		if [ -d "$FILENAME" ]; then
-			for F in $(find "$FILENAME" -type f); do
-				process_file $F
-			done
-		else
-			process_file $FILENAME
-		fi
+		echo "Invalid file ($FILENAME). Skipping..."
 	fi
 done
