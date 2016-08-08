@@ -108,6 +108,8 @@ on_failure() {
 }
 
 process_file() {
+	local FILENAME="$1"
+	
 	echo "==========="
         echo "Processing: $FILENAME"
 
