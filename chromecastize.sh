@@ -173,21 +173,21 @@ process_file() {
 ################
 
 # test if `mediainfo` is available
-MEDIAINFO=`which mediainfo`
+MEDIAINFO=`which mediainfo 2> /dev/null`
 if [ -z $MEDIAINFO ]; then
 	echo '`mediainfo` is not available, please install it'
 	exit 1
 fi
 
 # test if `ffmpeg` is available
-FFMPEG=`which avconv || which ffmpeg`
+FFMPEG=`which avconv 2> /dev/null || which ffmpeg 2> /dev/null`
 if [ -z $FFMPEG ]; then
 	echo '`avconv` (or `ffmpeg`) is not available, please install it'
 	exit 1
 fi
 
 # test if `grealpath` or `realpath` is available
-REALPATH=`which realpath || which grealpath`
+REALPATH=`which realpath 2> /dev/null || which grealpath 2> /dev/null`
 if [ -z $REALPATH ]; then
 	echo '`grealpath` (or `realpath`) is not available, please install it'
 	exit 1
