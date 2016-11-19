@@ -24,18 +24,18 @@ DEFAULT_GFORMAT=mkv
 #############
 
 # Check if a value exists in an array
-# @param $1 mixed  Needle  
+# @param $1 mixed  Needle
 # @param $2 array  Haystack
 # @return  Success (0) if value exists, Failure (1) otherwise
 # Usage: in_array "$needle" "${haystack[@]}"
 # See: http://fvue.nl/wiki/Bash:_Check_if_array_element_exists
 in_array() {
-    local hay needle=$1
-    shift
-    for hay; do
-        [[ $hay == $needle ]] && return 0
-    done
-    return 1
+	local hay needle=$1
+	shift
+	for hay; do
+		[[ $hay == $needle ]] && return 0
+	done
+	return 1
 }
 
 print_help() {
@@ -48,13 +48,13 @@ unknown_codec() {
 
 is_supported_gformat() {
 	if in_array "$1" "${SUPPORTED_GFORMATS[@]}"; then
-                return 0
-        elif in_array "$1" "${UNSUPPORTED_GFORMATS[@]}"; then
-                return 1
-        else
-                unknown_codec "$1"
-                exit 1
-        fi
+		return 0
+	elif in_array "$1" "${UNSUPPORTED_GFORMATS[@]}"; then
+		return 1
+	else
+		unknown_codec "$1"
+		exit 1
+	fi
 }
 
 is_supported_vcodec() {
@@ -109,17 +109,17 @@ on_failure() {
 
 process_file() {
 	local FILENAME="$1"
-	
-	echo "==========="
-        echo "Processing: $FILENAME"
 
-        # test extension
-        BASENAME=$(basename "$FILENAME")
-        EXTENSION="${BASENAME##*.}"
-        if ! is_supported_ext "$EXTENSION"; then
-                echo "- not a video format, skipping"
-                continue
-        fi
+	echo "==========="
+	echo "Processing: $FILENAME"
+
+	# test extension
+	BASENAME=$(basename "$FILENAME")
+	EXTENSION="${BASENAME##*.}"
+	if ! is_supported_ext "$EXTENSION"; then
+		echo "- not a video format, skipping"
+		continue
+	fi
 
 	# test if it's an `chromecastize` generated file
 	if grep -Fxq "`$REALPATH "$FILENAME"`" $HOME/processed_files; then
@@ -128,35 +128,35 @@ process_file() {
 	fi
 
 	# test general format
-        INPUT_GFORMAT=`mediainfo --Inform="General;%Format%\n" "$FILENAME" | head -n1`
-        if is_supported_gformat "$INPUT_GFORMAT" && [ "$OVERRIDE_GFORMAT" = "" ] || [ "$OVERRIDE_GFORMAT" = "$EXTENSION" ]; then
-                OUTPUT_GFORMAT="ok"
-        else
-                # if override format is specified, use it; otherwise fall back to default format
-                OUTPUT_GFORMAT="${OVERRIDE_GFORMAT:-$DEFAULT_GFORMAT}"
-        fi
-        echo "- general: $INPUT_GFORMAT -> $OUTPUT_GFORMAT"
+	INPUT_GFORMAT=`mediainfo --Inform="General;%Format%\n" "$FILENAME" | head -n1`
+	if is_supported_gformat "$INPUT_GFORMAT" && [ "$OVERRIDE_GFORMAT" = "" ] || [ "$OVERRIDE_GFORMAT" = "$EXTENSION" ]; then
+		OUTPUT_GFORMAT="ok"
+	else
+		# if override format is specified, use it; otherwise fall back to default format
+		OUTPUT_GFORMAT="${OVERRIDE_GFORMAT:-$DEFAULT_GFORMAT}"
+	fi
+	echo "- general: $INPUT_GFORMAT -> $OUTPUT_GFORMAT"
 
-        # test video codec
-        INPUT_VCODEC=`mediainfo --Inform="Video;%Format%\n" "$FILENAME" | head -n1`
-        if is_supported_vcodec "$INPUT_VCODEC"; then
-                OUTPUT_VCODEC="copy"
-        else
-                OUTPUT_VCODEC="$DEFAULT_VCODEC"
-        fi
-        echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
+	# test video codec
+	INPUT_VCODEC=`mediainfo --Inform="Video;%Format%\n" "$FILENAME" | head -n1`
+	if is_supported_vcodec "$INPUT_VCODEC"; then
+		OUTPUT_VCODEC="copy"
+	else
+		OUTPUT_VCODEC="$DEFAULT_VCODEC"
+	fi
+	echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
 
-        # test audio codec
-        INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%\n" "$FILENAME" | head -n1`
-        if is_supported_acodec "$INPUT_ACODEC"; then
-                OUTPUT_ACODEC="copy"
-        else
-                OUTPUT_ACODEC="$DEFAULT_ACODEC"
-        fi
-        echo "- audio: $INPUT_ACODEC -> $OUTPUT_ACODEC"
+	# test audio codec
+	INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%\n" "$FILENAME" | head -n1`
+	if is_supported_acodec "$INPUT_ACODEC"; then
+		OUTPUT_ACODEC="copy"
+	else
+		OUTPUT_ACODEC="$DEFAULT_ACODEC"
+	fi
+	echo "- audio: $INPUT_ACODEC -> $OUTPUT_ACODEC"
 
-        if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ] && [ "$OUTPUT_GFORMAT" = "ok" ]; then
-                echo "- file should be playable by Chromecast!"
+	if [ "$OUTPUT_VCODEC" = "copy" ] && [ "$OUTPUT_ACODEC" = "copy" ] && [ "$OUTPUT_GFORMAT" = "ok" ]; then
+		echo "- file should be playable by Chromecast!"
 		mark_as_good "$FILENAME"
 	else
 		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
@@ -165,7 +165,7 @@ process_file() {
 		fi
 		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" || on_failure "$FILENAME"
 		echo ""
-        fi
+	fi
 }
 
 ################
