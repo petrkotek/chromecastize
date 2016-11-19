@@ -209,9 +209,12 @@ for FILENAME in "$@"; do
 	elif ! [ -e "$FILENAME" ]; then
 		echo "File not found ($FILENAME). Skipping..."
 	elif [ -d "$FILENAME" ]; then
+		ORIG_IFS=$IFS
+		IFS=$(echo -en "\n\b")
 		for F in $(find "$FILENAME" -type f); do
 			process_file $F
 		done
+		IFS=$ORIG_IFS
 	elif [ -f "$FILENAME" ]; then
 		process_file $FILENAME
 	else
