@@ -158,6 +158,9 @@ process_file() {
 		mark_as_good "$FILENAME"
 	else
 		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME"`"
+		if [ "$OUTPUT_GFORMAT" = "ok" ]; then
+			OUTPUT_GFORMAT=$EXTENSION
+		fi
 		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" || on_failure "$FILENAME"
 		echo ""
         fi
