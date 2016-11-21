@@ -216,7 +216,7 @@ for FILENAME in "$@"; do
 		done
 		IFS=$ORIG_IFS
 	elif [ -f "$FILENAME" ]; then
-		process_file $FILENAME
+		process_file "$FILENAME"
 	else
 		echo "Invalid file ($FILENAME). Skipping..."
 	fi
