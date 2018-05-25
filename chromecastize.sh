@@ -96,11 +96,12 @@ mark_as_good() {
 on_success() {
 	echo ""
 	FILENAME="$1"
-	BASENAME=`basename "$FILENAME"`
-	echo "- conversion succeeded; file '$FILENAME.$OUTPUT_GFORMAT' saved"
-	mark_as_good "$FILENAME.$OUTPUT_GFORMAT"
+	DESTINATION_FILENAME="$2"
+	echo "- conversion succeeded; file '$DESTINATION_FILENAME' saved"
 	echo "- renaming original file as '$FILENAME.bak'"
 	mv "$FILENAME" "$FILENAME.bak"
+	mv "$FILENAME.$OUTPUT_GFORMAT" "$DESTINATION_FILENAME"
+	mark_as_good "$DESTINATION_FILENAME"
 }
 
 on_failure() {
@@ -168,7 +169,10 @@ process_file() {
 		if [ "$OUTPUT_GFORMAT" = "ok" ]; then
 			OUTPUT_GFORMAT=$EXTENSION
 		fi
-		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" || on_failure "$FILENAME"
+
+		# Define the destination filename, stripping the original extension.
+		DESTINATION_FILENAME=${FILENAME%.$EXTENSION}.$OUTPUT_GFORMAT
+		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" "$DESTINATION_FILENAME" || on_failure "$FILENAME"
 		echo ""
 	fi
 }
