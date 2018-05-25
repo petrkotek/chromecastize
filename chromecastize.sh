@@ -69,7 +69,11 @@ is_supported_vcodec() {
 }
 
 is_supported_acodec() {
-	if in_array "$1" "${SUPPORTED_ACODECS[@]}"; then
+	# Support for multichannel AAC audio has been removed in firmware 1.28.
+	# Ref. https://issuetracker.google.com/issues/69112577#comment4
+	if [ "$1" = "AAC" ] && [ "$2" -gt 2 ]; then
+		return 1
+	elif in_array "$1" "${SUPPORTED_ACODECS[@]}"; then
 		return 0
 	elif in_array "$1" "${UNSUPPORTED_ACODECS[@]}"; then
 		return 1
@@ -148,7 +152,8 @@ process_file() {
 
 	# test audio codec
 	INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
-	if is_supported_acodec "$INPUT_ACODEC"; then
+	INPUT_ACHANNELS=`mediainfo --Inform="Audio;%Channels%\n" "$FILENAME" 2> /dev/null | head -n1`
+	if is_supported_acodec "$INPUT_ACODEC" "$INPUT_ACHANNELS"; then
 		OUTPUT_ACODEC="copy"
 	else
 		OUTPUT_ACODEC="$DEFAULT_ACODEC"
