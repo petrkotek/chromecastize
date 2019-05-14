@@ -16,7 +16,7 @@ Install requirements by running e.g. `apt-get install ffmpeg mediainfo` (Debian)
 Usage
 -----
 ```
-./chromecastize.sh [--mp4 | --mkv | --config=/path/to/config] <videofile1> [videofile2 ...]
+./chromecastize.sh [--mp4 | --mkv | --force-vencode | --force-aencode | --config=/path/to/config] <videofile1> [videofile2 ...]
 ```
 
 ### Examples:
@@ -26,6 +26,8 @@ Usage
 ### Options:
 - `--mp4` forces conversion to MPEG-4 container
 - `--mkv` forces conversion to Matroska container
+- `--force-vencode` forces re-encoding of the video, if the codec is supported but the profile level is too high
+- `--force-aencode` forces re-encoding of the audio
 - `--config=/path/to/config` specify where to store configuration. When omitted the default folder `~/.chromecastize` is used.
 
 Authors
