@@ -19,7 +19,7 @@
 # https://developers.google.com/cast/docs/media#media_container_formats
 #
 # Default value (suitable for any Chromecast):
-#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
+#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')
 
 # The codec to use if the original general format is not supported.
 #
@@ -44,7 +44,7 @@
 # https://developers.google.com/cast/docs/media#video_codecs
 #
 # Default value (suitable for any Chromecast):
-#SUPPORTED_VCODECS=('AVC')
+#SUPPORTED_VCODECS=('AVC' 'VP8')
 
 # The video codec to use if the original one is not supported.
 #
@@ -98,27 +98,28 @@
 #FORCE_AENCODE=1
 
 # Suggested options for Chromecast Gen. 1 and Gen 2.
-#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
+#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')
 #DEFAULT_GFORMAT=mkv
-#SUPPORTED_VCODECS=('AVC')
+#SUPPORTED_VCODECS=('AVC' 'VP8')
 #DEFAULT_VCODEC=h264
 #DEFAULT_VCODEC_OPTS="-preset fast -profile:v high -level 4.1 -crf 17 -pix_fmt yuv420p"
 #SUPPORTED_ACODECS=('AAC' 'MPEG Audio' 'Vorbis' 'Ogg' 'Opus')
 #DEFAULT_ACODEC=libvorbis
 
 # Suggested options for Chromecast Gen. 3.
-#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
+#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')
 #DEFAULT_GFORMAT=mkv
-#SUPPORTED_VCODECS=('AVC')
+#SUPPORTED_VCODECS=('AVC' 'VP8')
 #DEFAULT_VCODEC=h264
 #DEFAULT_VCODEC_OPTS="-preset fast -profile:v high -level 4.2 -crf 17 -pix_fmt yuv420p"
 #SUPPORTED_ACODECS=('AAC' 'MPEG Audio' 'Vorbis' 'Ogg' 'Opus')
 #DEFAULT_ACODEC=libvorbis
 
 # Suggested options for Chromecast Ultra.
-#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska')
+#SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')
 #DEFAULT_GFORMAT=mkv
-#SUPPORTED_VCODECS=('AVC')
+#SUPPORTED_VCODECS=('AVC' 'HEVC' 'VP8' 'VP9')
+#UNSUPPORTED_VCODECS=('MPEG-4 Visual' 'xvid' 'MPEG Video')
 #DEFAULT_VCODEC=libx265
 #DEFAULT_VCODEC_OPTS="-preset fast -level 5.2 -crf 17"
 #SUPPORTED_ACODECS=('AAC' 'MPEG Audio' 'Vorbis' 'Ogg' 'Opus')
