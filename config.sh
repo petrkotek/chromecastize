@@ -89,6 +89,12 @@
 # Default value (suitable for any Chromecast):
 #DEFAULT_ACODEC=libvorbis
 
+# Audio encoding options to pass to ffmpeg. The available options depend on the
+# audio codec. See the FFMPEG documentation for more info on your chosen codec.
+#
+# Default value (suitable for any Chromecast):
+#DEFAULT_ACODEC_OPTS=""
+
 # Option to force re-encoding of the video stream. Uncomment this if you want to
 # ensure that the video will always be using your encoding options and the
 # resulting bitrate will be supported by your device.
@@ -96,6 +102,11 @@
 
 # Option to force re-encoding of the audio stream.
 #FORCE_AENCODE=1
+
+# Option to recode multichannel audio to stereo. Use this if you have problems
+# playing multichannel audio on your device, or if you do not have a surround
+# setup.
+# STEREO=1
 
 # Suggested options for Chromecast Gen. 1 and Gen 2.
 #SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')

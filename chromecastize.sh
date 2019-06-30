@@ -19,6 +19,7 @@ DEFAULT_VCODEC=h264
 # 1st and 2nd generation chromecasts and home hub https://developers.google.com/cast/docs/media
 DEFAULT_VCODEC_OPTS="-preset fast -profile:v high -level 4.1 -crf 17 -pix_fmt yuv420p"
 DEFAULT_ACODEC=libvorbis
+DEFAULT_ACODEC_OPTS=""
 DEFAULT_GFORMAT=mkv
 
 #############
@@ -41,7 +42,7 @@ in_array() {
 }
 
 print_help() {
-	echo "Usage: chromecastize.sh [--mp4 | --mkv | --force-vencode | --force-aencode | --config=/path/to/config/] <videofile1> [videofile2 ...]"
+	echo "Usage: chromecastize.sh [--mp4 | --mkv | --stereo | --force-vencode | --force-aencode | --config=/path/to/config/] <videofile1> [videofile2 ...]"
 }
 
 unknown_codec() {
@@ -156,22 +157,26 @@ process_file() {
 	fi
 
 	INPUT_VCODEC=`mediainfo --Inform="Video;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
-	VCODEC_OPTS=""
+	ENCODER_OPTIONS=""
 	if is_supported_vcodec "$INPUT_VCODEC" && [ -z "$FORCE_VENCODE" ]; then
 		OUTPUT_VCODEC="copy"
 	else
 		OUTPUT_VCODEC="$DEFAULT_VCODEC"
-		VCODEC_OPTS=$DEFAULT_VCODEC_OPTS
+		ENCODER_OPTIONS=$DEFAULT_VCODEC_OPTS
 	fi
 	echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
 
 	# test audio codec
 	INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
 	INPUT_ACHANNELS=`mediainfo --Inform="Audio;%Channels%\n" "$FILENAME" 2> /dev/null | head -n1`
-	if is_supported_acodec "$INPUT_ACODEC" "$INPUT_ACHANNELS" && [ -z "$FORCE_AENCODE" ]; then
+	if [ ! -z "$STEREO" ] && [ $INPUT_ACHANNELS -gt 2 ]; then
+		OUTPUT_ACODEC="$DEFAULT_ACODEC"
+		ENCODER_OPTIONS="$ENCODER_OPTIONS $DEFAULT_ACODEC_OPTS -ac 2"
+	elif is_supported_acodec "$INPUT_ACODEC" "$INPUT_ACHANNELS" && [ -z "$FORCE_AENCODE" ]; then
 		OUTPUT_ACODEC="copy"
 	else
 		OUTPUT_ACODEC="$DEFAULT_ACODEC"
+		ENCODER_OPTIONS="$ENCODER_OPTIONS $DEFAULT_ACODEC_OPTS"
 	fi
 	echo "- audio: $INPUT_ACODEC -> $OUTPUT_ACODEC"
 
@@ -186,7 +191,7 @@ process_file() {
 
 		# Define the destination filename, stripping the original extension.
 		DESTINATION_FILENAME=${FILENAME%.$EXTENSION}.$OUTPUT_GFORMAT
-		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" $VCODEC_OPTS -acodec "$OUTPUT_ACODEC" "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" "$DESTINATION_FILENAME" || on_failure "$FILENAME"
+		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" $ENCODER_OPTIONS "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" "$DESTINATION_FILENAME" || on_failure "$FILENAME"
 		echo ""
 	fi
 }
@@ -238,6 +243,9 @@ while :; do
 		--force-aencode)
 			FORCE_AENCODE=1
 			;;
+		--stereo)
+			STEREO=1
+			;;
 		--config=?*)
 			CONFIG_DIRECTORY=${1#*=}
 			;;
@@ -254,7 +262,7 @@ while :; do
 				exit 1
 			fi
 			;;
-                # Ends all options. Everything that follows is considered a
+		# Ends all options. Everything that follows is considered a
 		# filename.
 		--)
 			shift
