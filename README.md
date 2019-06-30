@@ -30,6 +30,11 @@ Usage
 - `--force-aencode` forces re-encoding of the audio
 - `--config=/path/to/config` specify where to store configuration. When omitted the default folder `~/.chromecastize` is used.
 
+Changing default options
+------------------------
+- Copy the example `config.sh` file to your config folder (default location: `~/.chromecastize`).
+- Uncomment the options which you wish to change by removing the leading `#` symbol.
+
 Authors
 -------
 - **Petr Kotek** (did the script save you some time? donations appreciated: www.petrkotek.com)

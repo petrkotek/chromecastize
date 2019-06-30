@@ -289,6 +289,11 @@ if ! [ -w "$CONFIG_DIRECTORY" ]; then
 	exit 1
 fi
 
+# Load default configuration if it exists.
+if [ -f "$CONFIG_DIRECTORY/config.sh" ]; then
+  . "$CONFIG_DIRECTORY/config.sh"
+fi
+
 # Ensure that the processed file list exists and is writeable.
 PROCESSED_FILES="$CONFIG_DIRECTORY/processed_files"
 if ! touch "$PROCESSED_FILES" &> /dev/null || ! [ -f "$PROCESSED_FILES" ] || ! [ -w "$PROCESSED_FILES" ]; then
