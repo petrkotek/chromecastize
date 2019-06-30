@@ -191,7 +191,11 @@ process_file() {
 
 		# Define the destination filename, stripping the original extension.
 		DESTINATION_FILENAME=${FILENAME%.$EXTENSION}.$OUTPUT_GFORMAT
-		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" $ENCODER_OPTIONS "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" "$DESTINATION_FILENAME" || on_failure "$FILENAME"
+
+		# Make sure the encoder options are not escaped with quotes.
+		IFS=' ' read -r -a ENCODER_OPTIONS_ARRAY <<< "$ENCODER_OPTIONS"
+
+		$FFMPEG -loglevel error -stats -i "$FILENAME" -map 0 -scodec copy -vcodec "$OUTPUT_VCODEC" -acodec "$OUTPUT_ACODEC" ${ENCODER_OPTIONS_ARRAY[@]} "$FILENAME.$OUTPUT_GFORMAT" && on_success "$FILENAME" "$DESTINATION_FILENAME" || on_failure "$FILENAME"
 		echo ""
 	fi
 }
