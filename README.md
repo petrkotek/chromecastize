@@ -26,6 +26,7 @@ Usage
 ### Options:
 - `--mp4` forces conversion to MPEG-4 container
 - `--mkv` forces conversion to Matroska container
+- `--stereo` forces conversion from multichannel audio to 2 channel stereo
 - `--force-vencode` forces re-encoding of the video, if the codec is supported but the profile level is too high
 - `--force-aencode` forces re-encoding of the audio
 - `--config=/path/to/config` specify where to store configuration. When omitted the default folder `~/.chromecastize` is used.
