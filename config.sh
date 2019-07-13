@@ -108,6 +108,12 @@
 # setup.
 # STEREO=1
 
+# What to do on successful conversion?
+# Options are:
+#  - bak (default) - will move the original file to a .bak extension
+#  - delete - will delete the original file and just keep the converted file
+#ONSUCCESS=bak
+
 # Suggested options for Chromecast Gen. 1 and Gen 2.
 #SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')
 #DEFAULT_GFORMAT=mkv
