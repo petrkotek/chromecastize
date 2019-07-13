@@ -107,7 +107,6 @@ on_success() {
 	echo ""
 	FILENAME="$1"
 	DESTINATION_FILENAME="$2"
-	echo "- conversion succeeded; file '$DESTINATION_FILENAME' saved"
 	if [ "$ONSUCCESS" = "delete" ]; then
 		echo "- deleting original file"
 		rm -f "$FILENAME"
@@ -116,6 +115,7 @@ on_success() {
 		mv "$FILENAME" "$FILENAME.bak"	
 	fi
 	mv "$FILENAME.$OUTPUT_GFORMAT" "$DESTINATION_FILENAME"
+	echo "- conversion succeeded; file '$DESTINATION_FILENAME' saved"
 	mark_as_good "$DESTINATION_FILENAME"
 }
 
