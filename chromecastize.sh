@@ -251,6 +251,9 @@ while :; do
 		--force-vencode)
 			FORCE_VENCODE=1
 			;;
+		--delete-on-success)
+			ONSUCCESS=delete
+			;;
 		--force-aencode)
 			FORCE_AENCODE=1
 			;;
