@@ -148,7 +148,7 @@ process_file() {
 	fi
 
 	# test general format
-	INPUT_GFORMAT=`mediainfo --Inform="General;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
+	INPUT_GFORMAT=`$MEDIAINFO --Inform="General;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
 	if is_supported_gformat "$INPUT_GFORMAT" && [ "$OVERRIDE_GFORMAT" = "" ] || [ "$OVERRIDE_GFORMAT" = "$EXTENSION" ]; then
 		OUTPUT_GFORMAT="ok"
 	else
@@ -158,12 +158,12 @@ process_file() {
 	echo "- general: $INPUT_GFORMAT -> $OUTPUT_GFORMAT"
 
 	# test video codec
-	INPUT_VCODEC_PROFILE=`mediainfo --Inform="Video;%Format_Profile%\n" "$FILENAME" 2> /dev/null | head -n1`
+	INPUT_VCODEC_PROFILE=`$MEDIAINFO --Inform="Video;%Format_Profile%\n" "$FILENAME" 2> /dev/null | head -n1`
 	if [ -n "$INPUT_VCODEC_PROFILE" ]; then
 		echo "- input video profile: $INPUT_VCODEC_PROFILE"
 	fi
 
-	INPUT_VCODEC=`mediainfo --Inform="Video;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
+	INPUT_VCODEC=`$MEDIAINFO --Inform="Video;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
 	ENCODER_OPTIONS=""
 	if is_supported_vcodec "$INPUT_VCODEC" && [ -z "$FORCE_VENCODE" ]; then
 		OUTPUT_VCODEC="copy"
@@ -174,8 +174,8 @@ process_file() {
 	echo "- video: $INPUT_VCODEC -> $OUTPUT_VCODEC"
 
 	# test audio codec
-	INPUT_ACODEC=`mediainfo --Inform="Audio;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
-	INPUT_ACHANNELS=`mediainfo --Inform="Audio;%Channels%\n" "$FILENAME" 2> /dev/null | head -n1`
+	INPUT_ACODEC=`$MEDIAINFO --Inform="Audio;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
+	INPUT_ACHANNELS=`$MEDIAINFO --Inform="Audio;%Channels%\n" "$FILENAME" 2> /dev/null | head -n1`
 	if [ ! -z "$STEREO" ] && [ $INPUT_ACHANNELS -gt 2 ]; then
 		OUTPUT_ACODEC="$DEFAULT_ACODEC"
 		ENCODER_OPTIONS="$ENCODER_OPTIONS $DEFAULT_ACODEC_OPTS -ac 2"
@@ -191,7 +191,7 @@ process_file() {
 		echo "- file should be playable by Chromecast!"
 		mark_as_good "$FILENAME"
 	else
-		echo "- video length: `mediainfo --Inform="General;%Duration/String3%" "$FILENAME" 2> /dev/null`"
+		echo "- video length: `$MEDIAINFO --Inform="General;%Duration/String3%" "$FILENAME" 2> /dev/null`"
 		if [ "$OUTPUT_GFORMAT" = "ok" ]; then
 			OUTPUT_GFORMAT=$EXTENSION
 		fi
