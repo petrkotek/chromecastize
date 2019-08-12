@@ -15,6 +15,8 @@ UNSUPPORTED_VCODECS=('MPEG-4 Visual' 'xvid' 'MPEG Video' 'HEVC')
 SUPPORTED_ACODECS=('AAC' 'MPEG Audio' 'Vorbis' 'Ogg' 'Opus')
 UNSUPPORTED_ACODECS=('AC-3' 'DTS' 'E-AC-3' 'PCM' 'TrueHD')
 
+ONSUCCESS=bak
+
 DEFAULT_VCODEC=h264
 # 1st and 2nd generation chromecasts and home hub https://developers.google.com/cast/docs/media
 DEFAULT_VCODEC_OPTS="-preset fast -profile:v high -level 4.1 -crf 17 -pix_fmt yuv420p"
@@ -105,10 +107,15 @@ on_success() {
 	echo ""
 	FILENAME="$1"
 	DESTINATION_FILENAME="$2"
-	echo "- conversion succeeded; file '$DESTINATION_FILENAME' saved"
-	echo "- renaming original file as '$FILENAME.bak'"
-	mv "$FILENAME" "$FILENAME.bak"
+	if [ "$ONSUCCESS" = "delete" ]; then
+		echo "- deleting original file"
+		rm -f "$FILENAME"
+	else
+		echo "- renaming original file as '$FILENAME.bak'"
+		mv "$FILENAME" "$FILENAME.bak"	
+	fi
 	mv "$FILENAME.$OUTPUT_GFORMAT" "$DESTINATION_FILENAME"
+	echo "- conversion succeeded; file '$DESTINATION_FILENAME' saved"
 	mark_as_good "$DESTINATION_FILENAME"
 }
 
@@ -243,6 +250,9 @@ while :; do
 			;;
 		--force-vencode)
 			FORCE_VENCODE=1
+			;;
+		--delete-on-success)
+			ONSUCCESS=delete
 			;;
 		--force-aencode)
 			FORCE_AENCODE=1
