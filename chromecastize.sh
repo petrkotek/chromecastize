@@ -176,7 +176,7 @@ process_file() {
 	# test audio codec
 	INPUT_ACODEC=`$MEDIAINFO --Inform="Audio;%Format%\n" "$FILENAME" 2> /dev/null | head -n1`
 	INPUT_ACHANNELS=`$MEDIAINFO --Inform="Audio;%Channels%\n" "$FILENAME" 2> /dev/null | head -n1`
-	if [ ! -z "$STEREO" ] && [ $INPUT_ACHANNELS -gt 2 ]; then
+	if [ ! -z "$STEREO" ] && [ ${INPUT_ACHANNELS:-3} -gt 2 ]; then
 		OUTPUT_ACODEC="$DEFAULT_ACODEC"
 		ENCODER_OPTIONS="$ENCODER_OPTIONS $DEFAULT_ACODEC_OPTS -ac 2"
 	elif is_supported_acodec "$INPUT_ACODEC" "$INPUT_ACHANNELS" && [ -z "$FORCE_AENCODE" ]; then
