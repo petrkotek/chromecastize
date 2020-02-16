@@ -4,7 +4,7 @@
 # CONFIG #
 ##########
 CONFIG_DIRECTORY=~/.chromecastize
-SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4' '3gp' 'mov' 'mpg' 'mpeg' 'qt' 'wmv' 'm2ts' 'flv' 'webm')
+SUPPORTED_EXTENSIONS=('mkv' 'avi' 'mp4' '3gp' 'mov' 'mpg' 'mpeg' 'qt' 'wmv' 'm2ts' 'flv' 'webm' 'm4v')
 
 SUPPORTED_GFORMATS=('MPEG-4' 'Matroska' 'WebM')
 UNSUPPORTED_GFORMATS=('BDAV' 'AVI' 'Flash Video' 'DivX')
