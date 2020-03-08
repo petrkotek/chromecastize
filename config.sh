@@ -112,6 +112,7 @@
 # Options are:
 #  - bak (default) - will move the original file to a .bak extension
 #  - delete - will delete the original file and just keep the converted file
+#  - keep - will keep the original file and create a new converted file with the '-chromecast' suffix
 #ONSUCCESS=bak
 
 # Suggested options for Chromecast Gen. 1 and Gen 2.
